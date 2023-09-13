@@ -1,4 +1,4 @@
-# WT On fly image handler - plugin for Joomla JoomShopping 
+# WT On fly image handler - plugin for Joomla JoomShopping
 Processing of JoomShopping product images during editing: the same proportions, conversion to the same format, removal of transparency, naming of files. The Intervention Image library is used. Joomla 3 (JoomShopping 4) and Joomla 4 (JoomShopping 5) support.
 # Why do I need a plugin?
 The plugin allows you to change the size of images when editing the product of the Joomla JoomShopping online store, bring them to the same proportions, remove transparency and save all images in the same format, for example in WEBP.
@@ -11,3 +11,4 @@ If YES, The images will be reduced to square proportions based on the largest si
 The plugin can save images in GIF, PNG, JPG, WEBP formats.
 **Rename image files?**
 If enabled, the name of the image file will be changed to the product name according to the rules for creating aliases in Joomla: spaces are replaced with hyphens. If there are several images, a numeric index will be added to the product name. For example, the product is called "Phone Panasonic", and the image files will be called "phone-panasonic", "phone-panasonic-1", "phone-panasonic-2", etc.
+[Developer's site]([url](https://web-tolk.ru/en/dev/joomla-plugins/wt-on-fly-image-handler)https://web-tolk.ru/en/dev/joomla-plugins/wt-on-fly-image-handler)
