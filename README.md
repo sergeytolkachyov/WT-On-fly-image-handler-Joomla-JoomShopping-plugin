@@ -11,4 +11,4 @@ If YES, The images will be reduced to square proportions based on the largest si
 The plugin can save images in GIF, PNG, JPG, WEBP formats.
 **Rename image files?**
 If enabled, the name of the image file will be changed to the product name according to the rules for creating aliases in Joomla: spaces are replaced with hyphens. If there are several images, a numeric index will be added to the product name. For example, the product is called "Phone Panasonic", and the image files will be called "phone-panasonic", "phone-panasonic-1", "phone-panasonic-2", etc.
-[Developer's site]([url](https://web-tolk.ru/en/dev/joomla-plugins/wt-on-fly-image-handler)https://web-tolk.ru/en/dev/joomla-plugins/wt-on-fly-image-handler)
+[Developer's site](https://web-tolk.ru/en/dev/joomla-plugins/wt-on-fly-image-handler)
