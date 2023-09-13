@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.10" type="plugin" group="jshoppingadmin" method="upgrade">
+	<name>PLG_WT_ON_FLY_IMAGE_HANDLER</name>
+	<author>Sergey Tolkachyov</author>
+	<creationDate>07/04/2022</creationDate>
+	<copyright>(C) 2022 Sergey Tolkachyov.</copyright>
+	<license>GNU General Public License version 2 or later</license>
+	<authorEmail>info@web-tolk.ru</authorEmail>
+	<authorUrl>https://web-tolk.ru</authorUrl>
+	<version>1.0.2</version>
+	<description>PLG_WT_ON_FLY_IMAGE_HANDLER_DESC</description>
+	<scriptfile>script.php</scriptfile>
+	<files>
+		<filename plugin="wt_on_fly_image_handler">wt_on_fly_image_handler.php</filename>
+		<folder>language</folder>
+		<folder>fields</folder>
+	</files>
+	<languages folder="language" client="administrator">
+		<language tag="ru-RU">ru-RU/ru-RU.plg_jshoppingadmin_wt_on_fly_image_handler.ini</language>
+		<language tag="ru-RU">ru-RU/ru-RU.plg_jshoppingadmin_wt_on_fly_image_handler.sys.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_jshoppingadmin_wt_on_fly_image_handler.ini</language>
+		<language tag="en-GB">en-GB/en-GB.plg_jshoppingadmin_wt_on_fly_image_handler.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+				<field addfieldpath="plugins/jshoppingadmin/wt_on_fly_image_handler/fields" type="plugininfo" name="plugininfo"/>
+				<field addfieldpath="plugins/jshoppingadmin/wt_on_fly_image_handler/fields" type="interventionimagestatus" name="interventionimagestatus"/>
+				<field type="radio"
+					   name="square_image"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_SQUARE_IMAGE"
+					   class="btn-group btn-group-yesno"
+					   default="0">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field type="note" description="PLG_WT_ON_FLY_IMAGE_HANDLER_SQUARE_IMAGE_YES" class="alert alert-info" showon="square_image:1"/>
+				<field type="note" description="PLG_WT_ON_FLY_IMAGE_HANDLER_SQUARE_IMAGE_NO" class="alert alert-info" showon="square_image:0"/>
+				<field type="list" name="output_file_format" label="PLG_WT_ON_FLY_IMAGE_HANDLER_OUTPUT_FILE_FORMAT" default="jpg">
+					<option value="webp">WEBP</option>
+					<option value="jpg">JPG</option>
+					<option value="gif">GIF</option>
+					<option value="png">PNG</option>
+				</field>
+				<field type="radio"
+					   name="rename_images"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_RENAME_IMAGES"
+					   class="btn-group btn-group-yesno"
+					   default="0">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field type="note" class="alert alert-info" description="PLG_WT_ON_FLY_IMAGE_HANDLER_RENAME_IMAGES_DESC" showon="rename_images:1"/>
+
+
+			</fieldset>
+		</fields>
+	</config>
+	<updateservers>
+        <server type="extension" name="WebTolk - Wt On Fly image handler"><![CDATA[	https://web-tolk.ru/component/swjprojects/jupdate.html?element=wt_on_fly_image_handler ]]></server>
+    </updateservers>
+</extension>
