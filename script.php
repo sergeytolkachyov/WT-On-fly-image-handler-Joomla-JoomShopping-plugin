@@ -203,7 +203,7 @@ return new class () implements ServiceProviderInterface {
 					} else {
 						$jintervention = simplexml_load_file(JPATH_ADMINISTRATOR.'/manifests/libraries/jinterventionimage.xml');
 						$jinterventionimage .= '<span class="btn-group">';
-						$jinterventionimage .= '<span class="btn btn-success btn-sm">v.'.$jintervention->version.'</span> ';
+						$jinterventionimage .= '<span class="btn btn-info btn-sm">JIntervention image v.'.$jintervention->version.'</span> ';
 						$jinterventionimage .= '<a class="btn btn-success btn-sm text-white" href="https://hika.su/zagruzki" target="_blank">Co-Author</a>';
 						$jinterventionimage .= '<a class="btn btn-success btn-sm text-white" href="https://github.com/Delo-Design/jinterventionimage" target="_blank">GitHub</a>';
 						$jinterventionimage .= '<a class="btn btn-success btn-sm text-white" href="https://github.com/Intervention/image" target="_blank">Original library GitHub</a>';
