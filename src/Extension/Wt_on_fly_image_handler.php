@@ -335,7 +335,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 				return $image;
 			}
 
-			$image->place($watermark, $position, $padding, $padding);
+			$image->place($watermark, $position, $padding, $padding, $this->params->get('watermark_opacity',100));
 
 			return $image;
 

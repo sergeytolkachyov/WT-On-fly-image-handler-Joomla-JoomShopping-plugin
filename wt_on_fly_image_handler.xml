@@ -73,7 +73,8 @@
 					   name="image_fill_color"
 					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_IMAGE_FILL_COLOR"
 					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_IMAGE_FILL_COLOR_DESC"
-					   default="#ffffff"/>
+					   default="#ffffff"
+					   showon="trim_similar_color:1[OR]square_image:1"/>
 				<field type="list"
 					   name="output_file_format"
 					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_OUTPUT_FILE_FORMAT"
@@ -160,6 +161,13 @@
 					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PADDING_DESC"
 					   required="true"
 					   default="10"
+					   showon="watermark!:0"/>
+				<field name="watermark_opacity"
+					   type="number"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_OPACITY_LABEL"
+					   min="1"
+					   max="100"
+					   default="100"
 					   showon="watermark!:0"/>
 			</fieldset>
 		</fields>
