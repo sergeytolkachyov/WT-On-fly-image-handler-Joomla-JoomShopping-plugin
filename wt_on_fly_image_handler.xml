@@ -2,8 +2,8 @@
 <extension type="plugin" group="jshoppingadmin" method="upgrade">
 	<name>PLG_WT_ON_FLY_IMAGE_HANDLER</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>06.12.2024</creationDate>
-	<copyright>(C) 2024 Sergey Tolkachyov.</copyright>
+	<creationDate>14.01.2025</creationDate>
+	<copyright>Copyright (c) 2022 - 2025 Sergey Tolkachyov. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
 	<authorEmail>info@web-tolk.ru</authorEmail>
 	<authorUrl>https://web-tolk.ru</authorUrl>
@@ -48,11 +48,38 @@
 					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_SQUARE_IMAGE_NO"
 					   class="alert alert-info"
 					   showon="square_image:0"/>
+				<field type="radio"
+					   name="trim_similar_color"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_TRIM_SIMILAR_COLOR"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_TRIM_SIMILAR_COLOR_DESC"
+					   class="btn-group btn-group-yesno"
+					   filter="int"
+					   default="0">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field type="number"
+					   name="trim_similar_color_tolerance"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_TRIM_SIMILAR_COLOR_TOLERANCE"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_TRIM_SIMILAR_COLOR_TOLERANCE_DESC"
+					   min="0"
+					   max="100"
+					   default="20"
+					   showon="trim_similar_color:1">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field type="color"
+					   name="image_fill_color"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_IMAGE_FILL_COLOR"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_IMAGE_FILL_COLOR_DESC"
+					   default="#ffffff"/>
 				<field type="list"
 					   name="output_file_format"
 					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_OUTPUT_FILE_FORMAT"
 					   default="jpg">
 					<option value="webp">WEBP</option>
+					<option value="avif">AVIF</option>
 					<option value="jpg">JPG</option>
 					<option value="gif">GIF</option>
 					<option value="png">PNG</option>
@@ -68,7 +95,72 @@
 				<field type="note"
 					   class="alert alert-info"
 					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_RENAME_IMAGES_DESC"
-					   showon="rename_images:1"/>ieldset>
+					   showon="rename_images:1"/>
+			</fieldset>
+			<fieldset name="watermark_fieldset" label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_FIELDSET_LABEL">
+				<field type="radio"
+					   name="watermark"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_PLACE_WATERMARK"
+					   class="btn-group btn-group-yesno"
+					   filter="integer"
+					   default="0">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+				<field name="watermarkfile"
+					   type="media"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_FILE_LABEL"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_FILE_DESC"
+					   folder="images"
+					   showon="watermark!:0"
+				/>
+
+				<field name="watermarkpercent"
+					   type="radio"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PERCENT_LABEL"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PERCENT_DESC"
+					   required="true"
+					   class="btn-group btn-group-yesno"
+					   default="0"
+					   showon="watermark!:0">
+					<option value="1">JYES</option>
+					<option value="0">JNO</option>
+				</field>
+
+				<field name="watermarkpercentvalue"
+					   type="text"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PERCENT_VALUE_LABEL"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PERCENT_VALUE_DESC"
+					   default="10"
+					   showon="watermarkpercent:1[AND]watermark!:0"
+				/>
+
+				<field name="watermarkpos"
+					   type="list"
+					   required="true"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_POS_LABEL"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_POS_DESC"
+					   default="topleft"
+					   showon="watermark!:0"
+				>
+					<option value="top-left">Top Left</option>
+					<option value="top">Top center</option>
+					<option value="top-right">Top right</option>
+					<option value="left">Center left</option>
+					<option value="center">Center center</option>
+					<option value="right">Center right</option>
+					<option value="bottom-left">Bottom left</option>
+					<option value="bottom">Bottom center</option>
+					<option value="bottom-right">Bottom right</option>
+				</field>
+
+				<field name="watermarkpadding"
+					   type="text"
+					   label="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PADDING_LABEL"
+					   description="PLG_WT_ON_FLY_IMAGE_HANDLER_WATERMARK_PADDING_DESC"
+					   required="true"
+					   default="10"
+					   showon="watermark!:0"/>
 			</fieldset>
 		</fields>
 	</config>

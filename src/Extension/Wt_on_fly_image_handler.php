@@ -1,19 +1,17 @@
 <?php
 /**
- * @package         JoomShopping
- * @subpackage      WT On fly image handler
- *
- * @copyright   (C) 2022 Sergey Tolkachyov <https://web-tolk.ru>
- * @license         GNU General Public License version 2 or later
- * @version         2.0.0
- * @link            https://web-tolk.ru/dev/joomla-plugins/wt-on-fly-image-handler
+ * @package       Jshoppingadmin - WT On fly image handler
+ * @version       2.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2023 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
  */
 
 namespace Joomla\Plugin\Jshoppingadmin\Wt_on_fly_image_handler\Extension;
 
-\defined('_JEXEC') or die;
-
-use Joomla\CMS\Factory;
+use Intervention\Image\Image;
+use Joomla\CMS\Helper\MediaHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jshopping\Site\Lib\JSFactory;
 use Joomla\Database\DatabaseAwareTrait;
@@ -24,12 +22,17 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Helper\LibraryHelper;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\Libraries\JInterventionimage\Manager;
+use function dump;
+use function file_exists;
+use function is_null;
+use function defined;
+
+defined('_JEXEC') or die;
 
 class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 {
 	use DatabaseAwareTrait;
-
-	protected $autoloadLanguage = true;
 
 	/**
 	 *
@@ -43,7 +46,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	{
 		return [
 			'onAfterSaveProductImage' => 'onAfterSaveProductImage',
-			'onAfterSaveProductEnd' => 'onAfterSaveProductEnd',
+			'onAfterSaveProductEnd'   => 'onAfterSaveProductEnd',
 			'onBeforeEditConfigImage' => 'onBeforeEditConfigImage',
 		];
 	}
@@ -56,8 +59,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	 * The trigger <strong>onAfterSaveProductImage</strong> fired on each image JoomShopping processing.<br/>
 	 * The trigger <strong>onAfterSaveProductEnd</strong> fired once when product saved.
 	 *
-	 * @param $product_id   int JoomShopping product id
-	 * @param $name_image   string  product image name
+	 * @param Event $event
 	 *
 	 * @see   JshoppingModelProducts::save
 	 * @see   JshoppingModelProducts::uploadImages
@@ -65,6 +67,10 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	 */
 	public function onAfterSaveProductImage(Event $event)
 	{
+		/**
+		 * @var int  $product_id  JoomShopping product id
+		 * @var string  $name_image  product image name
+		 */
 		[$product_id, $name_image] = $event->getArguments();
 		// Передаем имя файла в следующий триггер
 		$session = $this->getApplication()->getSession();
@@ -75,23 +81,30 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 		}
 		else
 		{
-			$image_names   = array();
-			$delete_images = array();
+			$image_names   = [];
+			$delete_images = [];
 		}
-
-		$name_thumb = 'thumb_' . $name_image; // миниатюра
-		$name_full  = 'full_' . $name_image; //исходное изображение.
+		/** @var string $name_thumb имя файла для миниатюры изображения */
+		$name_thumb = 'thumb_' . $name_image;
+		/** @var string $name_full имя файла исходного изображение */
+		$name_full = 'full_' . $name_image;
 
 		$jshopConfig = JSFactory::getConfig();
 
-		$path_image  = $jshopConfig->image_product_path . "/" . $name_image; //обработанное изображение
-		$path_thumb  = $jshopConfig->image_product_path . "/" . $name_thumb; //миниатюра изображения
-		$path_full   = $jshopConfig->image_product_path . "/" . $name_full; //исходное загруженное изображение
+		/** @var string $path_image обработанное изображение */
+		$path_image = $jshopConfig->image_product_path . "/" . $name_image;
+		/** @var string $path_thumb миниатюра изображения */
+		$path_thumb = $jshopConfig->image_product_path . "/" . $name_thumb;
+		/** @var string $path_full исходное загруженное изображение */
+		$path_full = $jshopConfig->image_product_path . "/" . $name_full;
+		/** @var int $image_quality Image  quality from JoomShopping params */
+		$image_quality = (int) $jshopConfig->image_quality;
+		/** @var string $savepath Joomshopping image product path */
+		$savepath = $jshopConfig->image_product_path;
 
 		/**
 		 * Переименовывать файлы изображений в человеко-понятные - название товара + числовой индекс
 		 */
-
 
 		if ($this->params->get('rename_images') == 1)
 		{
@@ -99,7 +112,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 			$lang    = JSFactory::getLang();
 
 			$product->load($product_id);
-			
+
 			$product_name = $lang->get('name');
 
 			$new_file_name      = OutputFilter::stringUrlSafe($product->$product_name);
@@ -129,10 +142,6 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 		/**
 		 * Настройки для обработки ОРИГИНАЛЬНОГО изображения
 		 */
-		//if (!ImageLib::resizeImageMagic($path_full, $jshopConfig->image_product_original_width, $jshopConfig->image_product_original_height, $jshopConfig->image_cut, $jshopConfig->image_fill, $path_full, $jshopConfig->image_quality, $jshopConfig->image_fill_color, $jshopConfig->image_interlace)){
-		// Максимальная ширина для оригинального изображения
-		// $jshopConfig->image_fill_color в своём формате. Потом докрутим.
-		//удаляем файлы, сделанные JoomShopping, в следующем триггере
 
 		if ($name_image !== $new_file_name)
 		{
@@ -143,16 +152,16 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 		}
 
 		// для оригиналов - показываются в лайтбоксе на фронте
-		$image_original_width  = (($jshopConfig->image_product_original_width) ? $jshopConfig->image_product_original_width : null);
-		$image_original_height = (($jshopConfig->image_product_original_height) ? $jshopConfig->image_product_original_height : null);
+		$image_original_width  = !empty($jshopConfig->image_product_original_width) ? (int) $jshopConfig->image_product_original_width : null;
+		$image_original_height = !empty($jshopConfig->image_product_original_height) ? (int) $jshopConfig->image_product_original_height : null;
 
 		$options = [
 			'widthFit'        => $image_original_width,
 			'heightFit'       => $image_original_height,
 			'new_file_name'   => 'full_' . File::stripExt($new_file_name), // оригинал изображения
 			'new_file_format' => $this->params->get('output_file_format', 'jpg'),
-			'savepath'        => $jshopConfig->image_product_path,
-			'image_quality'   => $jshopConfig->image_quality,
+			'savepath'        => $savepath,
+			'image_quality'   => $image_quality,
 		];
 
 		// Изменяем оригинал изображения
@@ -160,16 +169,16 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 
 		// для среднего изображения - показываются в карточке товара на фронте
 
-		$image_product_full_width  = (($jshopConfig->image_product_full_width) ? $jshopConfig->image_product_full_width : null);
-		$image_product_full_height = (($jshopConfig->image_product_full_height) ? $jshopConfig->image_product_full_height : null);
+		$image_product_full_width  = !empty($jshopConfig->image_product_full_width) ? (int) $jshopConfig->image_product_full_width : null;
+		$image_product_full_height = !empty($jshopConfig->image_product_full_height) ? (int) $jshopConfig->image_product_full_height : null;
 
 		$options = [
 			'widthFit'        => $image_product_full_width,
 			'heightFit'       => $image_product_full_height,
 			'new_file_name'   => File::stripExt($new_file_name), // основное изображение
 			'new_file_format' => $this->params->get('output_file_format', 'jpg'),
-			'savepath'        => $jshopConfig->image_product_path,
-			'image_quality'   => $jshopConfig->image_quality,
+			'savepath'        => $savepath,
+			'image_quality'   => $image_quality,
 		];
 
 		// Изменяем среднее изображение изображения
@@ -177,16 +186,16 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 
 		// для тумбочки изображения - показываются в карточке товара (зависит от шаблона) и в категории товаров на фронте
 
-		$image_product_width  = (($jshopConfig->image_product_width) ? $jshopConfig->image_product_width : null);
-		$image_product_height = (($jshopConfig->image_product_height) ? $jshopConfig->image_product_height : null);
+		$image_product_width  = !empty($jshopConfig->image_product_width) ? (int) $jshopConfig->image_product_width : null;
+		$image_product_height = !empty($jshopConfig->image_product_height) ? (int) $jshopConfig->image_product_height : null;
 
 		$options = [
 			'widthFit'        => $image_product_width,
 			'heightFit'       => $image_product_height,
 			'new_file_name'   => 'thumb_' . File::stripExt($new_file_name), // тумбочка изображения
 			'new_file_format' => $this->params->get('output_file_format', 'jpg'),
-			'savepath'        => $jshopConfig->image_product_path,
-			'image_quality'   => $jshopConfig->image_quality,
+			'savepath'        => $savepath,
+			'image_quality'   => $image_quality,
 		];
 
 		// Изменяем среднее изображение изображения
@@ -204,28 +213,36 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	 */
 	function handleImage(string $path_full, array $options): void
 	{
-
+		/**
+		 * 1. Изменяем размер изображения пропорционально
+		 * 2. Дорисовываем поля до квадратных, если надо
+		 * 3.
+		 */
 		$widthFit  = $options['widthFit'];
 		$heightFit = $options['heightFit'];
 
-		$jshopConfig = JSFactory::getConfig();
-
-		list($width, $height, $type, $attr) = \getimagesize($path_full);
-		$manager = JInterventionimage::getInstance(['driver' => 'imagick']);
+		$manager = Manager::getInstance();
 
 		// https://github.com/Intervention/image/issues/551 Transparency on PNG issue
-		$tmp_file = $manager->make($path_full);
-		$img      = $manager->canvas($tmp_file->width(), $tmp_file->height(), '#ffffff');
-		$img->insert($tmp_file);
-
+		$tmp_file = $manager->read($path_full);
 		// Убираем белый лишний фон и добавляем рамку в 50px вокруг
-		$img->trim('top-left', null, 20, 50);
+		$img = $manager->create(
+							($tmp_file->width() + 50),
+							($tmp_file->height() + 50))
+						->fill('#ffffff');
+		$img->place($tmp_file, 'center');
+
+		if($this->params->get('trim_similar_color',0))
+		{
+			$img->trim($this->params->get('trim_similar_color_tolerance',20));
+		}
 
 		//Делаем изображения квадратными
-		if ($this->params->get('square_image', 0) == 1)
+		if ($this->params->get('square_image', 0))
 		{
-			$width  = $img->getWidth();
-			$height = $img->getHeight();
+
+			$width  = $img->width();
+			$height = $img->height();
 			$ratio  = $width / $height;
 
 			if ($ratio != 1)
@@ -234,14 +251,13 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 				{
 					//http://image.intervention.io/api/resizeCanvas
 					$new_height = $width;
-					$img->resizeCanvas($width, $new_height, 'center', false, '#ffffff');
+					$img->resizeCanvas($width, $new_height, $this->params->get('image_fill_color','#ffffff'), 'center');
 				}
 				elseif ($height > $width)
 				{
 					$new_width = $height;
-					$img->resizeCanvas($new_width, $height, 'center', false, '#ffffff');
+					$img->resizeCanvas($new_width, $height, $this->params->get('image_fill_color','#ffffff'), 'center');
 				}
-
 
 				if ($heightFit > $widthFit)
 				{
@@ -252,6 +268,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 					$heightFit = $widthFit;
 				}
 			}
+
 		}
 
 		/**
@@ -263,15 +280,71 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 			// resize the image so that the largest side fits within the limit; the smaller
 			// side will be scaled to maintain the original aspect ratio
 			// https://image.intervention.io/v2/api/resize
-			$img->resize($widthFit, $heightFit, function ($constraint) {
-				$constraint->aspectRatio();
-				$constraint->upsize();
-
-			});
+			$img->resize($widthFit, $heightFit);
 		}
 
+		$img->encodeByExtension($options['new_file_format'], quality: $options['image_quality']);
+		$img = $this->placeWatermark($img);
+		$img->save($options['savepath'] . '/' . $options['new_file_name'] . '.' . $options['new_file_format']);
 
-		$img->save($options['savepath'] . '/' . $options['new_file_name'] . '.' . $options['new_file_format'], $options['image_quality'], $options['new_file_format']);
+	}
+
+	/**
+	 * @param   Image  $image  Intervention Image instance
+	 *
+	 * @return Image
+	 *
+	 * @since 2.0.0
+	 */
+	public function placeWatermark(Image $image): Image
+	{
+		$fileWatermark = $this->params->get('watermarkfile', '');
+
+		if (empty($fileWatermark))
+		{
+			$this->getApplication()->enqueueMessage('WT On fly image handler: there is no watermark file specified');
+
+			return $image;
+		}
+
+		$fileWatermark = MediaHelper::getCleanMediaFieldValue($fileWatermark);
+		$fileWatermark = JPATH_SITE . '/' . $fileWatermark;
+		$position      = $this->params->get('watermarkpos', 'bottom-right');
+		$padding       = $this->params->get('watermarkpadding', 10);
+
+		if (file_exists($fileWatermark))
+		{
+
+			$managerForWatermark = Manager::getInstance();
+			$watermark           = $managerForWatermark->read($fileWatermark);
+
+			$logoWidth   = $watermark->width();
+			$logoHeight  = $watermark->height();
+			$imageWidth  = $image->width();
+			$imageHeight = $image->height();
+
+			if ((int) $this->params->get('watermarkpercent', 0))
+			{
+				//сжимаем водяной знак по процентному соотношению от изображения на который накладывается
+				$precent       = (double) $this->params->get('watermarkpercentvalue', 10);
+				$logoWidthMax  = $imageWidth / 100 * $precent;
+				$logoHeightMax = $imageHeight / 100 * $precent;
+				$watermark->scale((int) $logoWidthMax, (int) $logoHeightMax);
+			}
+
+			if ($logoWidth > $imageWidth && $logoHeight > $imageHeight)
+			{
+				return $image;
+			}
+
+			$image->place($watermark, $position, $padding, $padding);
+
+			return $image;
+
+		}
+		$this->getApplication()->enqueueMessage('WT On fly image handler: watermark file not found in ' . $fileWatermark);
+
+		return $image;
 
 	}
 
@@ -282,13 +355,12 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	public function onAfterSaveProductEnd(Event $event)
 	{
 		[$product_id] = $event->getArguments();
-		$jshopConfig = \JSFactory::getConfig();
 
 		$session     = $this->getApplication()->getSession();
 		$image_names = $session->get('wt_on_fly_image_handler_image_name');
 		$session->clear('wt_on_fly_image_handler_image_name');
 		// В товаре - основное изображение
-		$product = \JSFactory::getTable('product', 'jshop');
+		$product = JSFactory::getTable('product');
 		$product->load($product_id);
 		// В таблице product_images
 		$db = $this->getDatabase();
@@ -306,9 +378,9 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 			$fields     = [
 				$db->quoteName('image_name') . ' = ' . $db->quote($image_name['new_name']),
 			];
-			$conditions = array(
+			$conditions = [
 				$db->quoteName('image_name') . ' = ' . $db->quote($image_name['old_name']),
-			);
+			];
 			$query->update('#__jshopping_products_images')->set($fields)->where($conditions);
 
 			$db->setQuery($query)->execute();
@@ -328,7 +400,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 		$session->clear('wt_on_fly_image_handler_delete_images');
 		foreach ($delete_images as $image)
 		{
-			if (\file_exists($image))
+			if (file_exists($image))
 			{
 				File::delete($image);
 			}
@@ -345,24 +417,23 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	 * @since 1.0.0
 	 * @see   \JshoppingControllerConfig::image
 	 */
-	public function onBeforeEditConfigImage(Event $event)
+	public function onBeforeEditConfigImage(Event $event): void
 	{
 		[$view] = $event->getArguments();
 		if (!file_exists(JPATH_ADMINISTRATOR . '/manifests/libraries/jinterventionimage.xml'))
 		{
-			Factory::getApplication()->enqueueMessage(Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_NOT_FOUND') . ' ' . Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_DOWNLOAD_JINTERVENTION'), 'warning');
+			$this->getApplication()->enqueueMessage(Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_NOT_FOUND') . ' ' . Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_DOWNLOAD_JINTERVENTION'), 'warning');
 		}
 		else
 		{
 			if (!LibraryHelper::isEnabled('jinterventionimage'))
 			{
-				Factory::getApplication()->enqueueMessage(Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_DISABLED') . ' ' . Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_ENABLE_JINTERVENTION'), 'warning');
+				$this->getApplication()->enqueueMessage(Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_DISABLED') . ' ' . Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_ENABLE_JINTERVENTION'), 'warning');
 			}
 		}
 
 		$view->tmp_html_start .= Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_ONBEFOREEDITCONFIGIMAGE_NOTICE');
 
 	}
-
 }
 

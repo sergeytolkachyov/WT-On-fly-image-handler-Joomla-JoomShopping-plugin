@@ -1,12 +1,23 @@
 <?php
+/**
+ * @package    Jshoppingadmin - WT On fly image handler
+ * @version       2.0.0
+ * @Author        Sergey Tolkachyov, https://web-tolk.ru
+ * @copyright     Copyright (C) 2023 Sergey Tolkachyov
+ * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
+ * @since         1.0.0
+ */
 
 namespace Joomla\Plugin\Jshoppingadmin\Wt_on_fly_image_handler\Fields;
-
-\defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\Field\NoteField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use function defined;
+use function simplexml_load_file;
+use function strtoupper;
+
+defined('_JEXEC') or die;
 
 class PlugininfoField extends NoteField
 {
@@ -33,14 +44,14 @@ class PlugininfoField extends NoteField
 	 */
 	protected function getLabel(): string
 	{
-        $data = $this->form->getData();
-        $element = 	$data->get('element');
-        $folder = 	$data->get('folder');
-        $wt_plugin_info = simplexml_load_file(JPATH_SITE."/plugins/".$folder."/".$element."/".$element.".xml");
+		$data = $this->form->getData();
+		$element = 	$data->get('element');
+		$folder = 	$data->get('folder');
+		$wt_plugin_info = simplexml_load_file(JPATH_SITE."/plugins/".$folder."/".$element."/".$element.".xml");
 
-        /* @var $doc Joomla\CMS\Document\Document */
-        $doc = Factory::getApplication()->getDocument();
-        $doc->getWebAssetManager()->addInlineStyle('
+		/* @var $doc Joomla\CMS\Document\Document */
+		$doc = Factory::getApplication()->getDocument();
+		$doc->getWebAssetManager()->addInlineStyle('
             #web_tolk_link {
 			text-align: center;
 			}
@@ -49,7 +60,7 @@ class PlugininfoField extends NoteField
 			}
         ');
 
-        return '</div>
+		return '</div>
 		<div class="card container shadow-sm w-100 p-0">
 			<div class="wt-b24-plugin-info row">
 				<div class="col-2 d-flex justify-content-center align-items-center">
@@ -88,4 +99,3 @@ class PlugininfoField extends NoteField
 		return $this->getLabel();
 	}
 }
-?>

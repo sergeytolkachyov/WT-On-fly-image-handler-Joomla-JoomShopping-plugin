@@ -1,7 +1,7 @@
 <?php
 /**
- * @package       WebTolk plugin info field
- * @version       1.0.0
+ * @package    Jshoppingadmin - WT On fly image handler
+ * @version       2.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2020 Sergey Tolkachyov
  * @license       GNU/GPL http://www.gnu.org/licenses/gpl-2.0.html
@@ -9,11 +9,14 @@
  */
 namespace Joomla\Plugin\Jshoppingadmin\Wt_on_fly_image_handler\Fields;
 
-\defined('_JEXEC') or die;
-
 use Joomla\CMS\Form\Field\NoteField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Helper\LibraryHelper;
+use function file_exists;
+use function simplexml_load_file;
+use function defined;
+
+defined('_JEXEC') or die;
 
 class InterventionimagestatusField extends NoteField
 {
@@ -31,7 +34,7 @@ class InterventionimagestatusField extends NoteField
 	protected function getInput()
 	{
 
-		$html = '<div class="alert span12 col-12" style="background-color: #2A384D; display: flex; align-items: center;">';
+		$html = '<div class="alert col-12" style="background-color: #2A384D; display: flex; align-items: center;">';
 		$html .= '<a href="https://intervention.io" style="margin-right: 20px;" "><svg class="icon" width="215" height="40" viewBox="0 0 432 80" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path fill-rule="evenodd" clip-rule="evenodd" d="M26.6127 22.4737C24.0191 26.4056 19.5625 29 14.5 29C6.49187 29 0 22.5081 0 14.5C0 6.49187 6.49187 0 14.5 0C19.7151 0 24.2871 2.75314 26.842 6.88526H56.5L71 32L59.453 52H46.4241L44.2592 48.2502L54 32L48.5 22.4737H26.6127Z" fill="white"></path>
 					<path fill-rule="evenodd" clip-rule="evenodd" d="M64.3873 57.5263C66.9809 53.5944 71.4375 51 76.5 51C84.5081 51 91 57.4919 91 65.5C91 73.5081 84.5081 80 76.5 80C71.2849 80 66.7129 77.2469 64.158 73.1147H34.5L20 48L31.547 28H44.5759L46.7408 31.7498L37 48L42.5 57.5263L64.3873 57.5263Z" fill="#7F91B6"></path>
@@ -47,10 +50,10 @@ class InterventionimagestatusField extends NoteField
 				$html .= Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_ENABLE_JINTERVENTION');
 			} else {
 				$jintervention = simplexml_load_file(JPATH_ADMINISTRATOR.'/manifests/libraries/jinterventionimage.xml');
-				$html .= '<span class="badge badge-success bg-success" style="margin-right: 10px;">v.'.$jintervention->version.'</span> ';
-				$html .= '<a class="badge badge-success bg-success" style="margin-right: 10px;" href="https://hika.su/zagruzki" target="_blank">Co-Author</a>';
-				$html .= '<a class="badge badge-success bg-success" style="margin-right: 10px;" href="https://github.com/Delo-Design/jinterventionimage" target="_blank">GitHub</a>';
-				$html .= '<a class="badge badge-success bg-success" style="margin-right: 10px;" href="https://github.com/Intervention/image" target="_blank">Original library GitHub</a>';
+				$html .= '<span class="badge bg-success me-2">v.'.$jintervention->version.'</span> ';
+				$html .= '<a class="badge bg-success me-2" href="https://hika.su/zagruzki" target="_blank">Co-Author</a>';
+				$html .= '<a class="badge bg-success me-2" href="https://github.com/Delo-Design/jinterventionimage" target="_blank">GitHub</a>';
+				$html .= '<a class="badge bg-success me-2" href="https://github.com/Intervention/image" target="_blank">Original library GitHub</a>';
 			}
 
 		}
@@ -81,17 +84,17 @@ class InterventionimagestatusField extends NoteField
 	{
 
 		if(file_exists(JPATH_ADMINISTRATOR.'/manifests/libraries/jinterventionimage.xml')){
-				if (LibraryHelper::isEnabled('jinterventionimage'))
-				{
-					$class   = 'alert-success';
-					$message = Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_ENABLED');
-				}
-				else
-				{
-					$class   = 'alert-danger';
-					$message = Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_DISABLED');
-				}
+			if (LibraryHelper::isEnabled('jinterventionimage'))
+			{
+				$class   = 'alert-success';
+				$message = Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_ENABLED');
 			}
+			else
+			{
+				$class   = 'alert-danger';
+				$message = Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_JINTERVENTION_STATUS_DISABLED');
+			}
+		}
 		else
 		{
 			$class   = 'alert-danger';
