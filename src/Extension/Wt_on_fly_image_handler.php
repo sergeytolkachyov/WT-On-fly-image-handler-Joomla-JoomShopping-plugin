@@ -1,6 +1,6 @@
 <?php
 /**
- * @package       Jshoppingadmin - WT On fly image handler
+ * @package    Jshoppingadmin - WT On fly image handler
  * @version       2.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2023 Sergey Tolkachyov

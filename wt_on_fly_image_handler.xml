@@ -2,7 +2,7 @@
 <extension type="plugin" group="jshoppingadmin" method="upgrade">
 	<name>PLG_WT_ON_FLY_IMAGE_HANDLER</name>
 	<author>Sergey Tolkachyov</author>
-	<creationDate>14.01.2025</creationDate>
+	<creationDate>15.01.2025</creationDate>
 	<copyright>Copyright (c) 2022 - 2025 Sergey Tolkachyov. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later</license>
 	<authorEmail>info@web-tolk.ru</authorEmail>
