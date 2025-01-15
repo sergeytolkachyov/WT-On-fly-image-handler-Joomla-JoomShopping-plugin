@@ -1,6 +1,6 @@
 <?php
 /**
- * @package    Jshoppingadmin - WT On fly image handler
+ * @package       Jshoppingadmin - WT On fly image handler
  * @version       2.0.0
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2023 Sergey Tolkachyov
@@ -223,18 +223,16 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 
 		$manager = Manager::getInstance();
 
-		// https://github.com/Intervention/image/issues/551 Transparency on PNG issue
 		$tmp_file = $manager->read($path_full);
-		// Убираем белый лишний фон и добавляем рамку в 50px вокруг
-		$img = $manager->create(
-							($tmp_file->width() + 50),
-							($tmp_file->height() + 50))
-						->fill('#ffffff');
+		// https://github.com/Intervention/image/issues/551 Transparency on PNG issue
+		$img = $manager->create($tmp_file->width(), $tmp_file->height())
+			->fill('#ffffff');
 		$img->place($tmp_file, 'center');
-
+		// Убираем лишний фон и добавляем рамку в 50px вокруг, заливаем фоном из настроек
 		if($this->params->get('trim_similar_color',0))
 		{
-			$img->trim($this->params->get('trim_similar_color_tolerance',20));
+			$img->trim($this->params->get('trim_similar_color_tolerance',20))
+				->resizeCanvas(($tmp_file->width() + 50), ($tmp_file->height() + 50), $this->params->get('image_fill_color','#ffffff'));
 		}
 
 		//Делаем изображения квадратными
@@ -436,4 +434,3 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 
 	}
 }
-
