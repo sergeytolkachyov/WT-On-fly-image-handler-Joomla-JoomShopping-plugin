@@ -303,6 +303,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
             return $image;
         }
 
+        $this->getApplication()->getLanguage()->load('plg_' . $this->_type . '_' . $this->_name, JPATH_ADMINISTRATOR);
 		$fileWatermark = $this->params->get('watermarkfile', '');
 
 		if (empty($fileWatermark))
@@ -347,7 +348,7 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 			return $image;
 
 		}
-		$this->getApplication()->enqueueMessage(Text::_('PLG_WT_ON_FLY_IMAGE_HANDLER_NO_WATERMARK_FOUND_ERROR', $fileWatermark), 'error');
+		$this->getApplication()->enqueueMessage(Text::sprintf('PLG_WT_ON_FLY_IMAGE_HANDLER_NO_WATERMARK_FOUND_ERROR', $fileWatermark), 'error');
 
 		return $image;
 
