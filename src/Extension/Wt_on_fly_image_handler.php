@@ -296,6 +296,13 @@ class Wt_on_fly_image_handler extends CMSPlugin implements SubscriberInterface
 	 */
 	public function placeWatermark(Image $image): Image
 	{
+        $useWatermark = $this->params->get('watermark', 0);
+
+        if (empty($useWatermark))
+        {
+            return $image;
+        }
+
 		$fileWatermark = $this->params->get('watermarkfile', '');
 
 		if (empty($fileWatermark))
