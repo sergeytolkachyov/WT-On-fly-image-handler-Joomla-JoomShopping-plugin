@@ -1,7 +1,7 @@
 <?php
 /**
- * @package       Jshoppingadmin - WT On fly image handler
- * @version       2.0.0
+ * @package    Jshoppingadmin - WT On fly image handler
+ * @version       2.0.1
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2023 Sergey Tolkachyov
  * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
@@ -23,7 +23,6 @@ use Joomla\Filesystem\File;
 use Joomla\CMS\Helper\LibraryHelper;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\Libraries\JInterventionimage\Manager;
-use function dump;
 use function file_exists;
 use function is_null;
 use function defined;

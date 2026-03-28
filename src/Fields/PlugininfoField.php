@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    Jshoppingadmin - WT On fly image handler
- * @version       2.0.0
+ * @version       2.0.1
  * @Author        Sergey Tolkachyov, https://web-tolk.ru
  * @copyright     Copyright (C) 2023 Sergey Tolkachyov
  * @license       GNU/GPL http://www.gnu.org/licenses/gpl-3.0.html
@@ -75,7 +75,7 @@ class PlugininfoField extends NoteField
 				</a>
 				</div>
 				<div class="col-10">
-					<div class="card-header bg-white p-1">
+					<div class="card-header bg-transparent p-1">
 						<span class="badge bg-success">v.' . $wt_plugin_info->version . '</span>
 					</div>
 					<div class="card-body">
